@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/34f094ac-2a5a-42f3-8b47-322d3df09cd4" alt="nsm logo" width="300">
+</p>
+
 # Velvue - Laravel API + Vue SPA SaaS Boilerplate
 
 [![](https://img.shields.io/badge/Laravel-11-red)](https://laravel.com)
