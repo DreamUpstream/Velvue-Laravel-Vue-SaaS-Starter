@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="col-span-12 lg:col-span-6 xl:col-span-3 shadow-lg rounded-border border border-gray-200"
-  >
+  <div class="col-span-12 lg:col-span-6 xl:col-span-3 card-container">
     <div class="card mb-0">
       <div class="flex justify-between mb-4">
         <div>
@@ -21,9 +19,7 @@
       <span class="text-muted-color">since last visit</span>
     </div>
   </div>
-  <div
-    class="col-span-12 lg:col-span-6 xl:col-span-3 shadow-lg rounded-border border border-gray-200"
-  >
+  <div class="col-span-12 lg:col-span-6 xl:col-span-3 card-container">
     <div class="card mb-0">
       <div class="flex justify-between mb-4">
         <div>
@@ -43,9 +39,7 @@
       <span class="text-muted-color">since last week</span>
     </div>
   </div>
-  <div
-    class="col-span-12 lg:col-span-6 xl:col-span-3 shadow-lg rounded-border border border-gray-200"
-  >
+  <div class="col-span-12 lg:col-span-6 xl:col-span-3 card-container">
     <div class="card mb-0">
       <div class="flex justify-between mb-4">
         <div>
@@ -65,9 +59,7 @@
       <span class="text-muted-color">newly registered</span>
     </div>
   </div>
-  <div
-    class="col-span-12 lg:col-span-6 xl:col-span-3 shadow-lg rounded-border border border-gray-300"
-  >
+  <div class="col-span-12 lg:col-span-6 xl:col-span-3 card-container">
     <div class="card mb-0">
       <div class="flex justify-between mb-4">
         <div>

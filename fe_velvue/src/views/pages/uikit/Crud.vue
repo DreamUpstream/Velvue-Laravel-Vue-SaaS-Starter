@@ -166,7 +166,7 @@ function getStatusLabel(status) {
 
 <template>
   <div>
-    <div class="card shadow-lg rounded-border border border-gray-200">
+    <div class="card card-container">
       <Toolbar class="mb-6">
         <template #start>
           <Button

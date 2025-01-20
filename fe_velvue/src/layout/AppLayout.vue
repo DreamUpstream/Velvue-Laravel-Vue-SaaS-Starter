@@ -10,7 +10,7 @@ const { activeTitle } = useLayout();
 <template>
   <div class="flex min-h-screen relative">
     <!-- Sidebar -->
-    <app-sidebar class="shadow-lg" />
+    <app-sidebar class="card-container" />
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col ml-64">

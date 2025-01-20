@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card card-container">
     <div class="font-semibold text-2xl mb-4">Documentation</div>
     <div class="font-semibold text-xl mb-4">Get Started</div>
     <p class="text-lg mb-4">

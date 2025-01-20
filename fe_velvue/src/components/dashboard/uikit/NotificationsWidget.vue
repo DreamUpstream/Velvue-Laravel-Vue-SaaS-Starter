@@ -10,7 +10,7 @@ const items = ref([
 </script>
 
 <template>
-  <div class="card shadow-lg rounded-border border border-gray-200">
+  <div class="card card-container">
     <div class="flex items-center justify-between mb-6">
       <div class="font-semibold text-xl">Notifications</div>
       <div>

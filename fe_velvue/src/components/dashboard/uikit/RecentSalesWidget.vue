@@ -14,7 +14,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="card shadow-lg rounded-border border border-gray-200">
+  <div class="card card-container">
     <div class="font-semibold text-xl mb-4">Recent Sales</div>
     <DataTable
       :value="products"

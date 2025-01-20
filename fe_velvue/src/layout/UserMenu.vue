@@ -31,7 +31,7 @@ function logout() {
     <!-- Dropdown Menu -->
     <div
       v-if="isOpen"
-      class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-md z-50"
+      class="absolute right-0 mt-2 w-48 bg-white card-container shadow-lg z-50"
     >
       <router-link
         to="/account"

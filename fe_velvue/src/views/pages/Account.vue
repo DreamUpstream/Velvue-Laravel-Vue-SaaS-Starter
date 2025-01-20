@@ -162,7 +162,7 @@ const filtersBilling = ref({
 </script>
 
 <template>
-  <div class="card p-6 shadow-lg rounded-border border border-gray-200">
+  <div class="card p-6 card-container">
     <h2 class="text-2xl font-semibold mb-4">Account Settings</h2>
 
     <Tabs>
