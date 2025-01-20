@@ -48,12 +48,26 @@ For macOS users, you can install these using [Homebrew](https://brew.sh/).
 brew install php node redis mysql
 ```
 
-### Backend Setup
+## Setup
 
-1. Clone the repository and install PHP dependencies:
+1. Fork the repository - click the "Fork" button in the top right corner and select your GitHub account.
+2. Clone the forked repository to your local machine:
 
 ```bash
-git clone https://github.com/DreamUpstream/Velvue-Laravel-Vue-SaaS-Starter.git
+git clone <your-forked-repo-url>
+```
+
+3. Link the original repository to your fork:
+
+```bash
+git remote add upstream https://github.com/DreamUpstream/Velvue-Laravel-Vue-SaaS-Starter.git
+```
+
+### Backend Setup
+
+1. Install PHP dependencies and set up the database:
+
+```bash
 cd velvue/be_velvue && composer install && cp .env.example .env && php artisan key:generate && php artisan migrate --seed && php artisan storage:link
 ```
 
@@ -86,6 +100,14 @@ VUE_APP_API_URL=http://localhost:8000
 
 ```bash
 npm run dev
+```
+
+### Updating fork
+
+I created update-fork.sh script to update your fork with the latest changes from the original repository. You can run it with the following command:
+
+```bash
+./update-fork.sh
 ```
 
 <!-- Contributing -->
