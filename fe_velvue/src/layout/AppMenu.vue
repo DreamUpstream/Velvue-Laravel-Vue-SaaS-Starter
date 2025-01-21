@@ -9,10 +9,15 @@ const model = ref([
     icon: "pi pi-fw pi-briefcase",
     to: "/",
     items: [
-      { label: "Dashboard", icon: "pi pi-fw pi-home", to: "/" },
+      { label: "Dashboard", icon: "pi pi-fw pi-objects-column", to: "/" },
       {
-        label: "Landing",
-        icon: "pi pi-fw pi-globe",
+        label: "Crud",
+        icon: "pi pi-fw pi-pencil",
+        to: "/pages/crud",
+      },
+      {
+        label: "Help Center",
+        icon: "pi pi-fw pi-question-circle",
         to: "/landing",
       },
       {
@@ -36,11 +41,7 @@ const model = ref([
           },
         ],
       },
-      {
-        label: "Crud",
-        icon: "pi pi-fw pi-pencil",
-        to: "/pages/crud",
-      },
+
       {
         label: "Not Found",
         icon: "pi pi-fw pi-exclamation-circle",

@@ -29,10 +29,10 @@ function logout() {
     </div>
 
     <!-- Bottom: logout button -->
-    <div class="p-4 border-t border-surface-border">
+    <div class="p-4 border-t border-surface-border hover:bg-gray-100">
       <button
         @click="logout"
-        class="w-full flex items-center gap-2 p-2 rounded hover:bg-surface-hover"
+        class="w-full flex items-center gap-2 p-2 rounded"
       >
         <i class="pi pi-sign-out"></i>
         <span>Logout</span>

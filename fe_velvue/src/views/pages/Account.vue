@@ -4,24 +4,18 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import api from "@/service/apiService";
-
-// PrimeVue imports
-// (Make sure you have installed them and configured in main.js / components auto-import)
-import { useToast } from "primevue/usetoast";
 import { FilterMatchMode } from "@primevue/core/api";
 
-// Local references
-// If you have a component for "ValidFormElement" usage, you can import it.
-// Otherwise you can just inline the label + error UI.
-import ValidFormElement from "@/components/forms/ValidFormElement.vue";
-
-const toast = useToast();
 const router = useRouter();
 const authStore = useAuthStore();
 
 // Basic user form fields
 const nameField = ref("");
 const emailField = ref("");
+const profileImage = ref(null);
+const uploadingImage = ref(false);
+const successMessage = ref("");
+const errorMessage = ref("");
 
 // We assume the user is loaded from the store or from an API
 // onMounted, you can load the user data from the store or an API.
@@ -29,6 +23,7 @@ onMounted(() => {
   if (authStore.user) {
     nameField.value = authStore.user.name;
     emailField.value = authStore.user.email;
+    profileImage.value = authStore.user.avatar;
   }
 });
 
@@ -53,67 +48,57 @@ const billingHistory = ref([
   { id: "INV-003", amount: 29.99, date: "2025-03-01", status: "Pending" },
 ]);
 
-// For uploading the profile image
-const profileImage = ref(null);
-function onUploadProfileImage(event) {
-  // event.files => array of uploaded files
-  // you can call your own API endpoint here
+async function uploadProfileImage(event) {
+  console.log("Upload event has been triggered", event);
   const file = event.files?.[0];
-  if (!file) return;
+  if (!file) {
+    errorMessage.value = "No file selected. Please select an image to upload.";
+  }
 
   const formData = new FormData();
   formData.append("image", file);
+  formData.append("entity", "avatars");
 
-  // Example - call your upload endpoint
-  api
-    .post("/upload", formData, {
+  try {
+    uploadingImage.value = true;
+    const response = await api.post("/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
-    })
-    .then((response) => {
-      toast.add({
-        severity: "success",
-        summary: "Profile Image Uploaded",
-        detail: "Your new profile image was uploaded successfully.",
-        life: 3000,
-      });
-      // Possibly reload user or store response
-    })
-    .catch((err) => {
-      toast.add({
-        severity: "error",
-        summary: "Upload failed",
-        detail: "Something went wrong while uploading your image.",
-        life: 3000,
-      });
     });
+
+    if (response.data.success) {
+      profileImage.value = `${import.meta.env.VITE_API_URL}/storage/${response.data.path}`; // Update image preview
+      successMessage.value =
+        "Your profile picture has been updated successfully.";
+
+      authStore.user.avatar = profileImage.value;
+    }
+  } catch (error) {
+    errorMessage.value =
+      "Failed to upload your profile image. Please try again.";
+    console.error(error);
+  } finally {
+    uploadingImage.value = false;
+  }
 }
 
-// Save profile changes
-const errors = ref(null);
 const loading = ref(false);
 async function saveProfile() {
-  errors.value = null;
-  loading.value = true;
+  successMessage.value = "";
+  errorMessage.value = "";
   try {
-    // Adjust as needed:
-    const resp = await api.post("/account/update", {
+    const response = await api.post("/account/update", {
       name: nameField.value,
       email: emailField.value,
+      avatar: profileImage.value, // Save updated avatar
     });
 
-    toast.add({
-      severity: "success",
-      summary: "Profile Updated",
-      detail: "Your account information has been updated.",
-      life: 3000,
-    });
+    successMessage.value =
+      "Your account details have been updated successfully.";
 
-    // Optionally refresh auth user in store
+    // Refresh the user details
     await authStore.fetchUser();
   } catch (error) {
-    errors.value = "Error updating profile. Please try again.";
-  } finally {
-    loading.value = false;
+    errorMessage.value = "Failed to update your profile. Please try again.";
   }
 }
 
@@ -126,17 +111,10 @@ async function deleteAccount() {
 
   try {
     await api.post("/account/delete");
-    // or: await api.delete('/account')
-    // Then log out
     await authStore.logout();
     router.push({ name: "login" });
   } catch (error) {
-    toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: "Could not delete account. Please try again later.",
-      life: 3000,
-    });
+    errorMessage.value = "Could not delete account. Please try again later.";
   }
 }
 
@@ -165,66 +143,70 @@ const filtersBilling = ref({
   <div class="card p-6 card-container">
     <h2 class="text-2xl font-semibold mb-4">Account Settings</h2>
 
+    <Message
+      v-if="successMessage"
+      severity="success"
+      icon="pi pi-check"
+      class="mb-4"
+    >
+      {{ successMessage }}
+    </Message>
+    <Message
+      v-if="errorMessage"
+      severity="error"
+      icon="pi pi-times-circle"
+      class="mb-4"
+    >
+      {{ errorMessage }}
+    </Message>
     <Tabs>
       <!-- PROFILE TAB -->
       <TabPanel header="Profile">
-        <!-- Error Alert -->
-        <Message
-          v-if="errors"
-          severity="error"
-          icon="pi pi-exclamation-circle"
-          class="mb-4"
-        >
-          {{ errors }}
-        </Message>
-
-        <div class="grid grid-cols-12 gap-4 items-start">
-          <!-- Left side: Profile Image upload -->
+        <div class="grid grid-cols-12 gap-6">
+          <!-- Profile Image -->
           <div
             class="col-span-12 md:col-span-4 flex flex-col items-center gap-4"
           >
-            <div class="flex flex-col items-center">
-              <Avatar
-                icon="pi pi-user"
-                class="mr-2"
-                size="xlarge"
-                :image="authStore.user?.avatar"
-              />
-              <span class="mt-2 font-semibold">
-                {{ authStore.user?.name || "Your Name" }}
-              </span>
-            </div>
+            <Avatar
+              v-if="profileImage"
+              :image="profileImage"
+              class="w-32 h-32 rounded-full border border-gray-300 shadow-lg"
+            />
 
-            <!-- Upload: using PrimeVue FileUpload with advanced mode -->
+            <Avatar
+              v-else
+              icon="pi pi-user"
+              class="mr-2"
+              size="xlarge"
+              :image="authStore.user?.avatar"
+            />
             <FileUpload
-              name="profileImage"
               mode="basic"
-              auto="true"
+              auto
+              name="profileImage"
               accept="image/*"
-              chooseLabel="Upload Profile Image"
+              chooseLabel="Change Picture"
               customUpload
-              @upload="onUploadProfileImage"
+              @uploader="uploadProfileImage"
+              :disabled="uploadingImage"
             />
           </div>
 
-          <!-- Right side: Profile Info -->
-          <div class="col-span-6 md:col-span-6 flex flex-col gap-4 items-start">
-            <ValidFormElement label="Name">
-              <InputText v-model="nameField" type="text" class="w-full" />
-            </ValidFormElement>
-
-            <ValidFormElement label="Email">
-              <InputText v-model="emailField" type="email" class="w-full" />
-            </ValidFormElement>
-
-            <div class="flex flex-row gap-2 justify-end mt-2">
-              <Button
-                label="Save"
-                icon="pi pi-check"
-                :loading="loading"
-                @click="saveProfile"
-              />
+          <!-- Profile Details -->
+          <div class="col-span-12 md:col-span-8">
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-1">Name</label>
+              <InputText v-model="nameField" class="w-full" />
             </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-1">Email</label>
+              <InputText v-model="emailField" type="email" class="w-full" />
+            </div>
+            <Button
+              label="Save Changes"
+              icon="pi pi-check"
+              @click="saveProfile"
+            />
           </div>
         </div>
       </TabPanel>

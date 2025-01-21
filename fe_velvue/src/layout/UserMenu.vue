@@ -1,7 +1,7 @@
-<!-- File: /fe_velvue/src/layout/UserMenu.vue -->
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useAuthStore } from "@/stores/auth.js";
+import { useRoute } from "vue-router";
 
 const isOpen = ref(false);
 
@@ -9,29 +9,65 @@ function toggleMenu() {
   isOpen.value = !isOpen.value;
 }
 
+function closeMenu() {
+  isOpen.value = false;
+}
+
 const authStore = useAuthStore();
+const route = useRoute();
 
 function logout() {
   authStore.logout();
 }
+
+onMounted(() => {
+  // Close menu on clicking outside
+  function handleClickOutside(event) {
+    const menu = document.querySelector(".user-menu-container");
+    if (menu && !menu.contains(event.target)) {
+      closeMenu();
+    }
+  }
+  document.addEventListener("click", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("click", handleClickOutside);
+  };
+});
+
+// Close menu when navigating
+watch(
+  () => route.path,
+  () => {
+    closeMenu();
+  }
+);
 </script>
 
 <template>
-  <div class="relative">
+  <div class="relative user-menu-container">
     <!-- Clickable Avatar/Name -->
     <button
       @click="toggleMenu"
-      class="flex items-center gap-2 px-4 py-2 rounded hover:bg-gray-50"
+      :class="
+        isOpen
+          ? `flex items-center gap-2 px-4 py-2 rounded-full hover:bg-gray-100 border border-gray-200 shadow-lg`
+          : `flex items-center gap-2 px-4 py-2 rounded-full hover:bg-gray-100 border border-gray-200`
+      "
     >
-      <Avatar icon="pi pi-user" :image="authStore.user?.avatar" size="large" />
+      <i class="pi pi-bars"></i>
+      <Avatar
+        icon="pi pi-user rounded"
+        :image="authStore.user?.avatar"
+        shape="circle"
+      />
       <span>{{ authStore.user?.name || "Guest" }}</span>
-      <i class="pi pi-chevron-down"></i>
     </button>
 
     <!-- Dropdown Menu -->
     <div
       v-if="isOpen"
-      class="absolute right-0 mt-2 w-48 bg-white card-container shadow-lg z-50"
+      class="absolute right-0 mt-2 w-48 bg-white card-container shadow-lg z-50 border border-gray-200 rounded-lg"
     >
       <router-link
         to="/account"
@@ -43,7 +79,7 @@ function logout() {
         to="/billing"
         class="block px-4 py-2 text-gray-700 hover:bg-gray-100"
       >
-        Billing / Upgrade
+        Help Center
       </router-link>
       <hr class="my-1" />
       <button
