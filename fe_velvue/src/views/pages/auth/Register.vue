@@ -111,8 +111,10 @@ function googleLogin() {
         id="nameInput"
         type="text"
         placeholder="Your Name"
-        class="w-full md:w-[30rem] mb-2"
+        class="w-full mb-2"
         v-model="nameField"
+        :invalid="errors?.name"
+        @input="errors.name = null"
       />
     </ValidFormElement>
 
@@ -122,8 +124,10 @@ function googleLogin() {
         id="emailInput"
         type="text"
         placeholder="Email address"
-        class="w-full md:w-[30rem] mb-2"
+        class="w-full mb-2"
         v-model="emailField"
+        :invalid="errors?.email"
+        @input="errors.email = null"
       />
     </ValidFormElement>
 
@@ -141,6 +145,8 @@ function googleLogin() {
         fluid
         :feedback="false"
         class="mb-2"
+        :invalid="errors?.password"
+        @input="errors.password = null"
       />
     </ValidFormElement>
 
@@ -158,6 +164,9 @@ function googleLogin() {
         fluid
         :feedback="false"
         class="mb-4"
+        :invalid="errors?.password_confirmation"
+        @keydown.enter="submitRegister"
+        @input="errors.password_confirmation = null"
       />
     </ValidFormElement>
 

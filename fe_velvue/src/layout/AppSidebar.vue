@@ -13,10 +13,7 @@ function logout() {
 </script>
 
 <template>
-  <!-- Full-height sidebar pinned left -->
-  <div
-    class="fixed top-0 left-0 w-64 h-screen bg-white border-r border-surface-border flex flex-col justify-between"
-  >
+  <div class="layout-sidebar card-container">
     <!-- Top: logo -->
     <div class="p-4">
       <img

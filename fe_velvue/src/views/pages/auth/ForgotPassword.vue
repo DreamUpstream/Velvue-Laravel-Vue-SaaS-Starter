@@ -1,4 +1,3 @@
-<!-- /fe_velvue/src/views/pages/auth/ForgotPassword.vue -->
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -15,10 +14,12 @@ const emailField = ref("");
 const loading = ref(false);
 const serverMessage = ref(null);
 const errors = ref(null);
+const serverErrors = ref(null);
 
 async function submitForgotPassword() {
   loading.value = true;
   errors.value = null;
+  serverErrors.value = null;
   serverMessage.value = null;
 
   if (!validateEmail(emailField.value)) {
@@ -35,9 +36,9 @@ async function submitForgotPassword() {
       serverMessage.value = "Password reset link sent! Check your email inbox.";
     }
   } catch (err) {
-    errors.value = err.response?.data?.errors || {
-      general: "Something went wrong.",
-    };
+    console.log(err);
+    serverErrors.value =
+      err.response?.data?.errors || "An unexpected error occurred.";
   } finally {
     loading.value = false;
   }
@@ -55,34 +56,37 @@ async function submitForgotPassword() {
       </Message>
     </div>
 
-    <!-- General error -->
-    <div v-if="errors?.general" class="mb-4">
-      <Message severity="error" icon="pi pi-exclamation-circle">
-        {{ errors.general }}
+    <!-- Server error -->
+    <div v-if="serverErrors" class="mb-4">
+      <Message
+        severity="error"
+        icon="pi pi-exclamation-circle"
+        v-for="(error, key) in serverErrors"
+        :key="key"
+      >
+        {{ error.message }}
       </Message>
     </div>
 
     <!-- Email field -->
-    <ValidFormElement
-      :label="'Email'"
-      :error="errors?.email"
-      name="emailInput"
-      messageClass="mb-4 w-96"
-    >
+    <ValidFormElement :label="'Email'" :error="errors?.email" name="emailInput">
       <InputText
         id="emailInput"
         type="text"
         placeholder="Email address"
-        class="w-full mb-4"
+        class="w-full mb-2"
         v-model="emailField"
+        @input="errors.email = null"
+        @keydown.enter="submitForgotPassword"
+        :invalid="errors?.email ? true : false"
       />
     </ValidFormElement>
 
     <Button
       label="Send Password Reset Link"
-      class="w-full"
+      class="w-full mt-2"
       :loading="loading"
-      :disabled="!emailField"
+      :disabled="!emailField || loading"
       @click="submitForgotPassword"
     />
 

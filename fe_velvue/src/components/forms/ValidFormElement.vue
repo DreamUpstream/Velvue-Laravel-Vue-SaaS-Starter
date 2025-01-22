@@ -4,10 +4,7 @@ const props = defineProps({
   label: { type: String, required: true },
   error: { type: String, default: "" },
   name: { type: String, default: "" },
-  messageClass: { type: String, default: "mb-4" },
 });
-
-// We might also handle "id" attribute or slot the input inside
 </script>
 
 <template>
@@ -18,7 +15,6 @@ const props = defineProps({
     {{ label }}
   </label>
 
-  <!-- We allow consumer to pass the input via <slot> -->
   <slot />
 
   <!-- Error message -->
@@ -28,7 +24,7 @@ const props = defineProps({
     variant="simple"
     size="small"
     icon="pi pi-times-circle"
-    :class="messageClass"
+    class="w-full mb-4"
   >
     {{ error }}
   </Message>

@@ -1,14 +1,12 @@
 <script setup>
 import { ProductService } from "@/service/ProductService";
 import { FilterMatchMode } from "@primevue/core/api";
-import { useToast } from "primevue/usetoast";
 import { onMounted, ref } from "vue";
 
 onMounted(() => {
   ProductService.getProducts().then((data) => (products.value = data));
 });
 
-const toast = useToast();
 const dt = ref();
 const products = ref();
 const productDialog = ref(false);
@@ -55,12 +53,6 @@ function saveProduct() {
         ? product.value.inventoryStatus.value
         : product.value.inventoryStatus;
       products.value[findIndexById(product.value.id)] = product.value;
-      toast.add({
-        severity: "success",
-        summary: "Successful",
-        detail: "Product Updated",
-        life: 3000,
-      });
     } else {
       product.value.id = createId();
       product.value.code = createId();
@@ -69,12 +61,6 @@ function saveProduct() {
         ? product.value.inventoryStatus.value
         : "INSTOCK";
       products.value.push(product.value);
-      toast.add({
-        severity: "success",
-        summary: "Successful",
-        detail: "Product Created",
-        life: 3000,
-      });
     }
 
     productDialog.value = false;
@@ -96,12 +82,6 @@ function deleteProduct() {
   products.value = products.value.filter((val) => val.id !== product.value.id);
   deleteProductDialog.value = false;
   product.value = {};
-  toast.add({
-    severity: "success",
-    summary: "Successful",
-    detail: "Product Deleted",
-    life: 3000,
-  });
 }
 
 function findIndexById(id) {
@@ -139,12 +119,6 @@ function deleteSelectedProducts() {
   );
   deleteProductsDialog.value = false;
   selectedProducts.value = null;
-  toast.add({
-    severity: "success",
-    summary: "Successful",
-    detail: "Products Deleted",
-    life: 3000,
-  });
 }
 
 function getStatusLabel(status) {

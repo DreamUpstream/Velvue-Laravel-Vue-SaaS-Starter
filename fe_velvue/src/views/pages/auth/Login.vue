@@ -43,7 +43,9 @@ async function submitForm() {
     router.push({ name: "dashboard" });
   } catch (err) {
     if (err[0]?.message) {
-      errors.value = { general: "Invalid email or password." };
+      errors.value = { general: err[0].message };
+    } else if (err.response?.status === 429) {
+      errors.value = { general: "Too many login attempts. Try again later." };
     } else {
       errors.value = {
         general: "An unexpected error occurred. Please try again.",
@@ -88,8 +90,11 @@ function googleLogin() {
         id="email"
         type="text"
         placeholder="Email address"
-        class="w-full md:w-[30rem] mb-2"
+        class="w-full mb-2"
         v-model="email"
+        :invalid="errors?.email"
+        @keydown.enter="submitForm"
+        @input="errors.email = null"
       />
     </ValidFormElement>
 
@@ -107,6 +112,9 @@ function googleLogin() {
         class="mb-2"
         fluid
         :feedback="false"
+        @keydown.enter="submitForm"
+        :invalid="errors?.password"
+        @input="errors.password = null"
       />
     </ValidFormElement>
 
@@ -127,6 +135,7 @@ function googleLogin() {
       class="w-full mb-4"
       :loading="loading"
       @click="submitForm"
+      :disabled="loading || !email || !password"
     />
 
     <!-- Register link -->

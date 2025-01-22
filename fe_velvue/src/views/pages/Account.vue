@@ -5,6 +5,9 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import api from "@/service/apiService";
 import { FilterMatchMode } from "@primevue/core/api";
+import { useConfirm } from "primevue/useconfirm";
+
+const confirm = useConfirm();
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -104,18 +107,25 @@ async function saveProfile() {
 
 // Delete account
 async function deleteAccount() {
-  const confirmDelete = confirm(
-    "Are you sure you want to delete your account? This action cannot be undone."
-  );
-  if (!confirmDelete) return;
-
-  try {
-    await api.post("/account/delete");
-    await authStore.logout();
-    router.push({ name: "login" });
-  } catch (error) {
-    errorMessage.value = "Could not delete account. Please try again later.";
-  }
+  confirm.require({
+    message:
+      "Are you sure you want to delete your account? This action cannot be undone.",
+    header: "Confirm Account Deletion",
+    icon: "pi pi-exclamation-triangle",
+    accept: async () => {
+      try {
+        await api.post("/account/delete");
+        await authStore.logout();
+        router.push({ name: "login" });
+      } catch (error) {
+        errorMessage.value =
+          "Could not delete account. Please try again later.";
+      }
+    },
+    reject: () => {
+      console.log("Account deletion canceled");
+    },
+  });
 }
 
 // Logout
@@ -140,6 +150,7 @@ const filtersBilling = ref({
 </script>
 
 <template>
+  <ConfirmDialog />
   <div class="card p-6 card-container">
     <h2 class="text-2xl font-semibold mb-4">Account Settings</h2>
 

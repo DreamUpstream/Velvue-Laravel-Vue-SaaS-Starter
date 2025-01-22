@@ -3,8 +3,9 @@
   flex-direction: column;
   min-height: 100vh;
   justify-content: space-between;
-  padding: 6rem 2rem 0 2rem;
+  padding: 0;
   transition: margin-left var(--layout-section-transition-duration);
+  background-color: var(--main-background-color);
 }
 
 .layout-main {
